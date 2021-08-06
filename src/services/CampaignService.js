@@ -1,6 +1,7 @@
 const CampaignRepository = require('../repository/CampaignRepository');
 const CategoryService = require('./CategoryService');
 const helpStatusEnum = require('../utils/enums/helpStatusEnum');
+const { BadRequestError, NotFoundError } = require('../utils/errorHandler');
 
 class CampaignService {
   constructor() {
@@ -25,7 +26,7 @@ class CampaignService {
     );
 
     if (checkHelpStatusExistence.length > 0) {
-      throw new Error('Um dos status informados é ínvalido');
+      throw new BadRequestError('Um dos status informados é ínvalido');
     }
 
     const helpList = await this.CampaignRepository.getCampaignListByStatus(
@@ -44,7 +45,7 @@ class CampaignService {
       categoryArray,
     );
     if (!CampaignList) {
-      throw new Error(
+      throw new NotFoundError(
         'Nenhuma campanha foi encontrada no seu raio de distância',
       );
     }
@@ -56,7 +57,7 @@ class CampaignService {
     const Campaign = await this.CampaignRepository.getById(id);
 
     if (!Campaign) {
-      throw new Error('Campanha não encontrada');
+      throw new NotFoundError('Campanha não encontrada');
     }
 
     return Campaign;

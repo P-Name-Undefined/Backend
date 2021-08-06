@@ -9,27 +9,14 @@ class NotificationController {
   async getUserNotificationsById(req, res, next) {
     const { id } = req.params;
 
-    try {
-      const result = await this.notificationService.getUserNotificationsById(id);
-      res.status(200).json(result);
-      next();
-    } catch (err) {
-      saveError(err);
-      res.status(400).json({ error: err.message });
-      next();
-    }
+    const result = await this.notificationService.getUserNotificationsById(id);
+    return res.status(200).json(result);
   }
 
   async sendNotifications(req, res, next) {
     const { title, body } = req.body;
-    try {
-      const result = await this.notificationService.createAndSendNotifications(title, body);
-      res.status(200).json(result);
-    } catch (err) {
-      saveError(err);
-      res.status(400).json({ error: err.message });
-      next();
-    }
+    const result = await this.notificationService.createAndSendNotifications(title, body);
+    return res.status(200).json(result);
   }
 }
 

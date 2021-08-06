@@ -1,4 +1,5 @@
 const CategoryRepository = require('../repository/CategoryRepository');
+const { NotFoundError } = require('../utils/errorHandler');
 
 class CategoryService {
   constructor() {
@@ -10,7 +11,7 @@ class CategoryService {
     const Category = await this.CategoryRepository.getById(id);
 
     if (!Category) {
-      throw new Error('Categoria não encontrada');
+      throw new NotFoundError('Categoria não encontrada');
     }
 
     return Category;
@@ -19,7 +20,7 @@ class CategoryService {
   async getCategoryList(id) {
     const Categorylist = await this.CategoryRepository.list(id);
     if (!Categorylist) {
-      throw new Error('Categoria não encontrada');
+      throw new NotFoundError('Categoria não encontrada');
     }
 
     return Categorylist;

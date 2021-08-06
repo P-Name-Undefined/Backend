@@ -18,6 +18,7 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb' }));
 setupWebsocket(server);
 const databaseConnect = require('./src/config/database');
+const { errorHandler } = require('./src/utils/errorHandler');
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -26,6 +27,7 @@ databaseConnect();
 dailySchedule();
 setRoutes(app);
 
+app.use(errorHandler);
 app.use(Sentry.Handlers.errorHandler());
 
 server.listen(8000);

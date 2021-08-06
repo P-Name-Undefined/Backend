@@ -6,7 +6,7 @@ class EntityController {
     this.entityService = new EntityService();
   }
 
-  async createEntity(req, res, next) {
+  async createEntity(req, res) {
     const { latitude, longitude } = req.body;
 
     const location = {
@@ -20,18 +20,11 @@ class EntityController {
       hasEntity: req.query.hasEntity === 'true',
     };
 
-    try {
-      const result = await this.entityService.createEntity(data);
-      res.status(201).json(result);
-      next();
-    } catch (err) {
-      saveError(err);
-      res.status(400).json({ error: err.message });
-      next();
-    }
+    const result = await this.entityService.createEntity(data);
+    return res.status(201).json(result);
   }
 
-  async editEntityById(req, res, next) {
+  async editEntityById(req, res) {
     const data = {
       email: req.decodedToken.email,
       photo: req.body.photo,
@@ -40,15 +33,8 @@ class EntityController {
       notificationToken: req.body.notificationToken,
       deviceId: req.body.deviceId,
     };
-    try {
-      const result = await this.entityService.editEntityById(data);
-      res.status(200).json(result);
-      return next();
-    } catch (err) {
-      saveError(err);
-      res.status(400).json({ error: err.message });
-      return next();
-    }
+    const result = await this.entityService.editEntityById(data);
+    return res.status(200).json(result);
   }
 
   async editEntityAddressById(req, res, next) {
@@ -61,29 +47,15 @@ class EntityController {
       complement: req.body.complement,
     };
 
-    try {
-      const result = await this.entityService.editEntityAddressById(data);
-      res.status(200).json(result);
-      return next();
-    } catch (err) {
-      saveError(err);
-      res.status(400).json({ error: err.message });
-      return next();
-    }
+    const result = await this.entityService.editEntityAddressById(data);
+    return res.status(200).json(result);
   }
 
   async deleteEntityLogic(req, res, next) {
     const { email } = req.decodedToken;
 
-    try {
-      const result = await this.entityService.deleteEntityLogically(email);
-      res.status(200).json(result);
-      return next();
-    } catch (err) {
-      saveError(err);
-      res.status(400).json({ error: err.message });
-      return next();
-    }
+    const result = await this.entityService.deleteEntityLogically(email);
+    return res.status(200).json(result);
   }
 
   async getEntityById(req, res, next) {
@@ -92,15 +64,8 @@ class EntityController {
       email: req.decodedToken.email,
     };
 
-    try {
-      const result = await this.entityService.getEntity(data);
-      res.status(200).json(result);
-      next();
-    } catch (err) {
-      saveError(err);
-      res.status(404).json({ error: err.message });
-      next();
-    }
+    const result = await this.entityService.getEntity(data);
+    return res.status(200).json(result);
   }
 
   async updateEntityLocationById(req, res, next) {
@@ -110,15 +75,8 @@ class EntityController {
       longitude: req.body.longitude,
     };
 
-    try {
-      const result = await this.entityService.updateEntityLocationById(data);
-      res.status(200).json(result);
-      next();
-    } catch (err) {
-      saveError(err);
-      res.status(400).json({ error: err.message });
-      next();
-    }
+    const result = await this.entityService.updateEntityLocationById(data);
+    return res.status(200).json(result);
   }
 
   async checkEntityExistence(req, res, next) {
@@ -128,15 +86,8 @@ class EntityController {
       entityIdentifier = req.decodedToken.email;
     }
 
-    try {
-      const result = await this.entityService.checkEntityExistence(entityIdentifier);
-      res.status(200).json(result);
-      next();
-    } catch (err) {
-      saveError(err);
-      res.status(404).json({ error: err.message });
-      next();
-    }
+    const result = await this.entityService.checkEntityExistence(entityIdentifier);
+    return res.status(200).json(result);
   }
 }
 

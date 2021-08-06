@@ -1,4 +1,5 @@
 const CategoryService = require('../services/CategoryService');
+const { BadRequestError } = require('../utils/errorHandler');
 const saveError = require('../utils/ErrorHistory');
 
 class CategoryController {
@@ -6,32 +7,17 @@ class CategoryController {
     this.CategoryService = new CategoryService();
   }
 
-  async getCategoryById(req, res, next) {
+  async getCategoryById(req, res) {
     const { id } = req.params;
-
-    try {
-      const result = await this.CategoryService.getCategoryByid(id);
-      res.status(200).json(result);
-      next();
-    } catch (err) {
-      saveError(err);
-      res.status(400).json({ error: err.message });
-      next();
-    }
+    if(!id) throw new BadRequestError('No id provided');
+    const result = await this.CategoryService.getCategoryByid(id);
+    return res.status(200).json(result);
   }
 
-  async getCategoryList(req, res, next) {
+  async getCategoryList(req, res) {
     const id = req.query.id || null;
-
-    try {
-      const result = await this.CategoryService.getCategoryList(id);
-      res.status(200).json(result);
-      next();
-    } catch (err) {
-      saveError(err);
-      res.status(400).json({ error: err.message });
-      next();
-    }
+    const result = await this.CategoryService.getCategoryList(id);
+    return res.status(200).json(result);
   }
 }
 

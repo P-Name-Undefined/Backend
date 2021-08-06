@@ -21,15 +21,8 @@ class UserController {
       hasUser: req.query.hasUser === "true",
     };
 
-    try {
-      const result = await this.userService.createUser(data);
-      res.status(201).json(result);
-      next();
-    } catch (err) {
-      saveError(err);
-      res.status(400).json({ error: err.message });
-      next();
-    }
+    const result = await this.userService.createUser(data);
+    return res.status(201).json(result);
   }
 
   async editUserById(req, res, next) {
@@ -41,15 +34,8 @@ class UserController {
       notificationToken: req.body.notificationToken,
       deviceId: req.body.deviceId,
     };
-    try {
-      const result = await this.userService.editUserById(data);
-      res.status(200).json(result);
-      return next();
-    } catch (err) {
-      saveError(err);
-      res.status(400).json({ error: err.message });
-      return next();
-    }
+    const result = await this.userService.editUserById(data);
+    return res.status(200).json(result);
   }
 
   async editUserAddressById(req, res, next) {
@@ -62,101 +48,59 @@ class UserController {
       complement: req.body.complement,
     };
 
-    try {
-      const result = await this.userService.editUserAddressById(data);
-      res.status(200).json(result);
-      return next();
-    } catch (err) {
-      saveError(err);
-      res.status(400).json({ error: err.message });
-      return next();
-    }
+    const result = await this.userService.editUserAddressById(data);
+    return res.status(200).json(result);
   }
 
-  async deleteUserLogic(req, res, next) {
+  async deleteUserLogic(req, res) {
     const { email } = req.decodedToken;
 
-    try {
-      const result = await this.userService.deleteUserLogically(email);
-      res.status(200).json(result);
-      return next();
-    } catch (err) {
-      saveError(err);
-      res.status(400).json({ error: err.message });
-      return next();
-    }
+    const result = await this.userService.deleteUserLogically(email);
+    return res.status(200).json(result);
   }
 
-  async getUserById(req, res, next) {
+  async getUserById(req, res) {
     const data = {
       id: req.params.id,
       email: req.decodedToken.email,
     };
-    try {
-      const result = await this.userService.getUser(data);
-      res.status(200).json(result);
-      next();
-    } catch (err) {
-      saveError(err);
-      res.status(404).json({ error: err.message });
-      next();
-    }
+    const result = await this.userService.getUser(data);
+    return res.status(200).json(result);
   }
 
-  async getAnyUserById(req, res, next) {
+  async getAnyUserById(req, res) {
     const data = {
       id: req.params.id,
     };
-    try {
-      const result = await this.userService.getAnyUser(data);
-      res.status(200).json(result);
-      next();
-    } catch (err) {
-      saveError(err);
-      res.status(404).json({ error: err.message });
-      next();
-    }
+    
+    const result = await this.userService.getAnyUser(data);
+    return res.status(200).json(result);
   }
 
-  async updateUserLocationById(req, res, next) {
+  async updateUserLocationById(req, res) {
     const data = {
       email: req.decodedToken.email,
       latitude: req.body.latitude,
       longitude: req.body.longitude,
     };
 
-    try {
-      const result = await this.userService.updateUserLocationById(data);
-      res.status(200).json(result);
-      next();
-    } catch (err) {
-      saveError(err);
-      res.status(400).json({ error: err.message });
-      next();
-    }
+    const result = await this.userService.updateUserLocationById(data);
+    return res.status(200).json(result);
   }
 
-  async checkUserExistence(req, res, next) {
+  async checkUserExistence(req, res) {
     let { userIdentifier } = req.params;
 
     if (!userIdentifier) {
       userIdentifier = req.decodedToken.email;
     }
 
-    try {
-      const result = await this.userService.checkUserExistence(userIdentifier);
-      res.status(200).json(result);
-      next();
-    } catch (err) {
-      saveError(err);
-      res.status(404).json({ error: err.message });
-      next();
-    }
+    const result = await this.userService.checkUserExistence(userIdentifier);
+    return res.status(200).json(result);
   }
 
-  async getUserGroupRiskList(req, res, next) {
-    res.status(200).json(riskGroups);
-    next();
+  async getUserGroupRiskList(req, res) {
+    return res.status(200).json(riskGroups);
   }
 }
 
