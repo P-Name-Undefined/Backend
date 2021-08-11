@@ -5,6 +5,7 @@ const NotificationService = require("./NotificationService");
 const NotificationMixin = require("../utils/NotificationMixin");
 const { notificationTypesEnum } = require("../models/Notification");
 const saveError = require('../utils/ErrorHistory');
+const { findConnections, sendMessage } = require("../../websocket");
 
 class OfferedHelpService {
   constructor() {
@@ -32,8 +33,8 @@ class OfferedHelpService {
     return help;
   }
 
-  async listHelpsOffers(userId, categoryArray,getOtherUsers) {
-    const helpOffers = await this.OfferedHelpRepository.list(userId, categoryArray,getOtherUsers);
+  async listHelpsOffers(userId, categoryArray, getOtherUsers) {
+    const helpOffers = await this.OfferedHelpRepository.list(userId, categoryArray, getOtherUsers);
     return helpOffers;
   }
 
@@ -49,11 +50,11 @@ class OfferedHelpService {
     return helpOffers;
   }
 
-  async addPossibleHelpedUsers(helpedId, helpOfferId) {    
-    const helpOffer = await this.getHelpOfferById(helpOfferId); 
-    let user,findOneUser,userPosition,possibleHelpedUser;
+  async addPossibleHelpedUsers(helpedId, helpOfferId) {
+    const helpOffer = await this.getHelpOfferById(helpOfferId);
+    let user, findOneUser, userPosition, possibleHelpedUser;
 
-    if(isUserEntity){
+    if (isUserEntity) {
       userPosition = helpOffer.possibleEntities.indexOf(helpedId);
       user = this.EntityService;
       findOneUser = "findOneEntityWithProjection";
@@ -61,26 +62,26 @@ class OfferedHelpService {
     } else {
       userPosition = helpOffer.possibleHelpedUsers.indexOf(helpedId);
       user = this.UserService;
-      findOneUser = "findOneUserWithProjection"; 
+      findOneUser = "findOneUserWithProjection";
       possibleHelpedUser = helpOffer.possibleHelpedUsers;
     }
 
-    if(helpOffer.ownerId == helpedId){
+    if (helpOffer.ownerId == helpedId) {
       throw new Error("Usuário não pode ser ajudante da própria oferta");
     }
     else if (userPosition > -1) {
       throw new Error("Usuário já é um possível ajudado");
     }
 
-    await this.useService(possibleHelpedUser,"push",[helpedId]);
+    await this.useService(possibleHelpedUser, "push", [helpedId]);
     await this.OfferedHelpRepository.update(helpOffer);
-    
-    const helpedUserProjection = { name: 1, _id: 0};
-    const { name: helpedUserName } = await this.useService(user,findOneUser,[helpedId,helpedUserProjection]);
-    
+
+    const helpedUserProjection = { name: 1, _id: 0 };
+    const { name: helpedUserName } = await this.useService(user, findOneUser, [helpedId, helpedUserProjection]);
+
     const ownerProjection = { deviceId: 1, _id: 0 };
-    const { deviceId:ownerDeviceId } = await this.useService(this.UserService,"findOneUserWithProjection",[helpOffer.ownerId,ownerProjection]);  
-     
+    const { deviceId: ownerDeviceId } = await this.useService(this.UserService, "findOneUserWithProjection", [helpOffer.ownerId, ownerProjection]);
+
     const title = `${helpedUserName} quer sua ajuda!`;
     const body = `Sua oferta ${helpOffer.title} recebeu um interessado`;
 
@@ -112,15 +113,10 @@ class OfferedHelpService {
   }
 
   async finishHelpOfferByOwner(helpOfferId, email) {
-    const ownerEmail = await this.getEmailByHelpOfferId(
-      helpOfferId,
-    );
-
-    if (ownerEmail !== email) {
-      throw new Error('Usuário não autorizado');
-    }
-
-    this.OfferedHelpRepository.finishHelpOfferByOwner(helpOfferId);
+    const helpOffer = await this.OfferedHelpRepository.finishHelpOfferByOwner(helpOfferId, email);
+   
+    const sendSocketMessageTo = findConnections(helpOffer.categoryId, helpOffer.ownerId.toString());
+    sendMessage(sendSocketMessageTo, 'delete-help-offer', helpOfferId);
   }
 
   async getEmailByHelpOfferId(helpOfferId) {
