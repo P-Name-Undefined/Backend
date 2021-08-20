@@ -111,11 +111,21 @@ class OfferdHelpRepository extends BaseRepository {
     return helpOffer;
   }
 
-  async finishHelpOfferByOwner(helpOfferId) {
-    const filter = { _id: helpOfferId };
-    const update = { active: false };
+  async finishHelpOfferByOwner(id, email) {
+    const query = {_id: ObjectID(id)};
+    const fields = ['ownerId', 'categoryId', 'active'];
+    const user = {
+      path: 'user',
+      select: 'email'
+    }
+    const helpOffer = await super.$findOne(query, fields, user);
+    
+    if (helpOffer.user.email !== email) {
+      throw new Error('Usuário não autorizado');
+    }
 
-    await super.$findOneAndUpdate(filter, update);
+    helpOffer.active = false;
+    return super.$update(helpOffer);
   }
 
   async getEmailByHelpOfferId(helpOfferId) {
