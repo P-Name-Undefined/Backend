@@ -1,4 +1,5 @@
 const CampaignService = require('../services/CampaignService');
+const { UnauthorizedError, BadRequestError } = require('../utils/errorHandler');
 const saveError = require('../utils/ErrorHistory');
 
 class CampaignController {
@@ -7,70 +8,46 @@ class CampaignController {
   }
 
   async createCampaign(req, res) {
-    try {
-      const newCampaign = await this.CampaignService.createNewCampaign(
-        req.body,
-      );
-      return res.json(newCampaign);
-    } catch (error) {
-      return res.status(400).json({ error: error.message });
-    }
+    const newCampaign = await this.CampaignService.createNewCampaign(
+      req.body,
+    );
+    return res.json(newCampaign);
   }
 
   async listCampaign(req, res) {
-    try {
-      const campaign = await this.CampaignService.listCampaign();
-      return res.json(campaign);
-    } catch (error) {
-      return res.status(400).json(error);
-    }
+    const campaign = await this.CampaignService.listCampaign();
+    return res.json(campaign);
   }
 
-  async getCampaignListByStatus(req, res, next) {
+  async getCampaignListByStatus(req, res) {
     const { userId } = req.params;
 
     const statusList = req.query.statusList.split(',');
 
-    try {
-      const result = await this.CampaignService.getCampaignListByStatus({
-        userId,
-        statusList,
-      });
-      res.status(200).json(result);
-      next();
-    } catch (err) {
-      saveError(err);
-      res.status(400).json({ error: err.message });
-      next();
-    }
+    const result = await this.CampaignService.getCampaignListByStatus({
+      userId,
+      statusList,
+    });
+    return res.status(200).json(result);
   }
 
   async listCampaignByOwnerId(req, res) {
     const { ownerId } = req.params;
-    try {
-      const campaign = await this.CampaignService.listCampaignByOwnerId(
-        ownerId,
-      );
-      return res.json(campaign);
-    } catch (error) {
-      return res.status(400).json(error);
-    }
+    if(!ownerId) throw new UnauthorizedError('No ownerId provided');
+    const campaign = await this.CampaignService.listCampaignByOwnerId(
+      ownerId,
+    );
+    return res.json(campaign);
   }
 
-  async deleteCampaignLogic(req, res, next) {
+  async deleteCampaignLogic(req, res) {
     const { id } = req.params;
-    try {
-      const result = await this.CampaignService.deleteCampaign(id);
-      res.status(200).json(result);
-      next();
-    } catch (err) {
-      saveError(err);
-      res.status(400).json({ error: err.message });
-      next();
-    }
+    if(!id) throw new BadRequestError('No id provided');
+    const result = await this.CampaignService.deleteCampaign(id);
+    res.status(200).json(result);
   }
 
-  async listCampaignNear(req, res, next) {
+  async listCampaignNear(req, res) {
     const except = !!req.query['id.except'];
     const helper = !!req.query['id.helper'];
     let temp = null;
@@ -90,51 +67,29 @@ class CampaignController {
       ? req.query.coords.split(',').map((coord) => Number(coord))
       : null;
 
-    try {
-      let result;
-      if (near) {
-        result = await this.CampaignService.getNearCampaignList(
-          coords,
-          except,
-          id,
-          categoryArray,
-        );
-      }
-      res.status(200);
-      res.json(result);
-      next();
-    } catch (err) {
-      console.log(err);
-      saveError(err);
-      res.status(400).json({ error: err.message });
-      next();
+    let result;
+    if (near) {
+      result = await this.CampaignService.getNearCampaignList(
+        coords,
+        except,
+        id,
+        categoryArray,
+      );
     }
+    return res.status(200).json(result);
   }
 
-  async finishCampaign(req, res, next) {
-    const { id } = req.params;
-    try {
-      const result = await this.CampaignService.finishCampaign(id);
-      res.status(200).json(result);
-      next();
-    } catch (err) {
-      saveError(err);
-      res.status(400).json({ error: err.message });
-      next();
-    }
+  async finishCampaign(req, res) {
+    if(!id) throw new BadRequestError('No id provided');
+    const result = await this.CampaignService.finishCampaign(id);
+    return res.status(200).json(result);
   }
 
-  async getCampaignById(req, res, next) {
+  async getCampaignById(req, res) {
     const { id } = req.params;
-    try {
-      const result = await this.CampaignService.getCampaignById(id);
-      res.status(200).json(result);
-      next();
-    } catch (err) {
-      saveError(err);
-      res.status(400).json({ error: err.message });
-      next();
-    }
+    if(!id) throw new BadRequestError('No id provided')
+    const result = await this.CampaignService.getCampaignById(id);
+    return res.status(200).json(result);
   }
 }
 

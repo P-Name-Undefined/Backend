@@ -5,6 +5,7 @@ const NotificationService = require("./NotificationService");
 const NotificationMixin = require("../utils/NotificationMixin");
 const { notificationTypesEnum } = require("../models/Notification");
 const saveError = require('../utils/ErrorHistory');
+const { NotFoundError, BadRequestError } = require("../utils/errorHandler");
 
 class OfferedHelpService {
   constructor() {
@@ -26,7 +27,7 @@ class OfferedHelpService {
     const help = await this.OfferedHelpRepository.getByIdWithAggregation(id);
 
     if (!help) {
-      throw new Error('Oferta não encontrada');
+      throw new NotFoundError('Oferta não encontrada');
     }
 
     return help;
@@ -66,10 +67,10 @@ class OfferedHelpService {
     }
 
     if(helpOffer.ownerId == helpedId){
-      throw new Error("Usuário não pode ser ajudante da própria oferta");
+      throw new BadRequestError("Usuário não pode ser ajudante da própria oferta");
     }
     else if (userPosition > -1) {
-      throw new Error("Usuário já é um possível ajudado");
+      throw new BadRequestError("Usuário já é um possível ajudado");
     }
 
     await this.useService(possibleHelpedUser,"push",[helpedId]);

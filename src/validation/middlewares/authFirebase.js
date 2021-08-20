@@ -1,6 +1,7 @@
 const admin = require('../../config/authFirebase');
 const saveError = require('../../utils/ErrorHistory');
 const isEntity = require('../../utils/IsEntity');
+const { ForbiddenError, UnauthorizedError } = require('../../utils/errorHandler');
 
 const isAuthenticated = async (req, res, next) => {
   if (req.headers.authorization
@@ -17,11 +18,10 @@ const isAuthenticated = async (req, res, next) => {
 
       return next();
     } catch (err) {
-      saveError(err);
-      return res.status(401).json({ error: 'Usuário não autorizado' });
+      throw new UnauthorizedError('Usuário não está autorizado');
     }
   }
-  const err = new Error('Usuário não está autenticado');
+  const err = new ForbiddenError('Usuário não está autenticado');
   saveError(err);
   return res.status(403).json({ error: err.message });
 };

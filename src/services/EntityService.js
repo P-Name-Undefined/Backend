@@ -2,6 +2,7 @@ const EntityRepository = require("../repository/EntityRepository");
 const UserRepository = require("../repository/UserRepository");
 const firebase = require("../config/authFirebase");
 const { ObjectID } = require("mongodb");
+const { NotFoundError, BadRequestError } = require("../utils/errorHandler");
 
 class EntityService {
   constructor() {
@@ -15,11 +16,11 @@ class EntityService {
     );
 
     if (isUserRegistered) {
-      throw new Error("Email já sendo utilizado");
+      throw new BadRequestError("Email já sendo utilizado");
     }
 
     if (data.password.length < 8) {
-      throw new Error("Senha inválida");
+      throw new BadRequestError("Senha inválida");
     }
 
     if (data.cnpj.length >= 14) {
@@ -55,7 +56,7 @@ class EntityService {
 
   async getEntity({ id = undefined, email = undefined }) {
     if (!id && !email) {
-      throw new Error("Nenhum identificador encontrado");
+      throw new BadRequestError("Nenhum identificador encontrado");
     }
     let entity;
 
@@ -65,7 +66,7 @@ class EntityService {
       entity = await this.entityRepository.getEntityByEmail(email);
     }
     if (!entity) {
-      throw new Error("Usuário não encontrado");
+      throw new NotFoundError("Usuário não encontrado");
     }
     return entity;
   }
@@ -79,6 +80,7 @@ class EntityService {
     deviceId,
   }) {
     const entity = await this.getEntity({ email });
+    if(!entity) throw new NotFoundError("Usuário não encontrado");
 
     entity.photo = photo || entity.photo;
     entity.name = name || entity.name;

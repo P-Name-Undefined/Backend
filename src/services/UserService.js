@@ -2,6 +2,7 @@ const UserRepository = require("../repository/UserRepository");
 const EntityRepository = require("../repository/EntityRepository");
 const firebase = require("../config/authFirebase");
 const { ObjectID } = require("mongodb");
+const { ConflictError, BadRequestError, NotFoundError } = require("../utils/errorHandler");
 
 class UserService {
   constructor() {
@@ -15,11 +16,11 @@ class UserService {
     );
 
     if (isEntityRegistered) {
-      throw new Error("Email já sendo utilizado");
+      throw new ConflictError("Email já sendo utilizado");
     }
 
     if (data.password.length < 8) {
-      throw new Error("Senha inválida");
+      throw new BadRequestError("Senha inválida");
     }
 
     if (data.cpf.length >= 11) {
@@ -63,7 +64,7 @@ class UserService {
 
   async getUser({ id = undefined, email = undefined }) {
     if (!id && !email) {
-      throw new Error("Nenhum identificador encontrado");
+      throw new NotFoundError("Nenhum identificador encontrado");
     }
     let user;
 
@@ -73,14 +74,14 @@ class UserService {
       user = await this.userRepository.getUserByEmail(email);
     }
     if (!user) {
-      throw new Error("Usuário não encontrado");
+      throw new NotFoundError("Usuário não encontrado");
     }
     return user;
   }
 
   async getAnyUser({ id = undefined, email = undefined }) {
     if (!id && !email) {
-      throw new Error("Nenhum identificador encontrado");
+      throw new NotFoundError("Nenhum identificador encontrado");
     }
     let user;
 
@@ -89,7 +90,7 @@ class UserService {
       if (!user) user = await this.entityRepository.getById(id);
     }
     if (!user) {
-      throw new Error("Usuário não encontrado");
+      throw new NotFoundError("Usuário não encontrado");
     }
     return user;
   }

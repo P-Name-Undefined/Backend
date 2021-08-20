@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { BadRequestError } = require('../utils/errorHandler');
 
 class BaseRepository {
   constructor(modelClass) {
@@ -53,7 +54,7 @@ class BaseRepository {
       try {
         finalIdFormat = mongoose.Types.ObjectId(id);
       } catch (err) {
-        throw new Error('Tamanho ou formato de id inválido');
+        throw new BadRequestError('Tamanho ou formato de id inválido');
       }
     }
 
