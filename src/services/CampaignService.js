@@ -14,11 +14,6 @@ class CampaignService {
     return newCampaign;
   }
 
-  async listCampaign() {
-    const campaign = await this.CampaignRepository.list();
-    return campaign;
-  }
-
   async getCampaignListByStatus({ userId, statusList }) {
     const checkHelpStatusExistence = statusList.filter(
       (item) => !Object.values(helpStatusEnum).includes(item),
@@ -60,23 +55,6 @@ class CampaignService {
     }
 
     return Campaign;
-  }
-
-  async deleteCampaign(id) {
-    let campaign = await this.getCampaignById(id);
-    console.log(campaign);
-    campaign.active = false;
-
-    await this.CampaignRepository.update(campaign);
-    
-
-    campaign = JSON.parse(JSON.stringify(campaign));
-    return { message: `Campaign ${id} deleted!` };
-  }
-
-  async listCampaignByOwnerId(ownerId) {
-    const campaign = await this.CampaignRepository.listByOwnerId(ownerId);
-    return campaign;
   }
 
   async finishCampaign(id) {

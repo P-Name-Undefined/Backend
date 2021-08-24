@@ -64,8 +64,6 @@ class OfferedHelpController {
     }
   }
 
-  async chooseHelpedUser(req, res) {}
-
   async finishHelpOfferByOwner(req, res) {
     const { helpOfferId } = req.params;
     const { email } = req.decodedToken;

@@ -17,15 +17,6 @@ class CampaignController {
     }
   }
 
-  async listCampaign(req, res) {
-    try {
-      const campaign = await this.CampaignService.listCampaign();
-      return res.json(campaign);
-    } catch (error) {
-      return res.status(400).json(error);
-    }
-  }
-
   async getCampaignListByStatus(req, res, next) {
     const { userId } = req.params;
 
@@ -36,31 +27,6 @@ class CampaignController {
         userId,
         statusList,
       });
-      res.status(200).json(result);
-      next();
-    } catch (err) {
-      saveError(err);
-      res.status(400).json({ error: err.message });
-      next();
-    }
-  }
-
-  async listCampaignByOwnerId(req, res) {
-    const { ownerId } = req.params;
-    try {
-      const campaign = await this.CampaignService.listCampaignByOwnerId(
-        ownerId,
-      );
-      return res.json(campaign);
-    } catch (error) {
-      return res.status(400).json(error);
-    }
-  }
-
-  async deleteCampaignLogic(req, res, next) {
-    const { id } = req.params;
-    try {
-      const result = await this.CampaignService.deleteCampaign(id);
       res.status(200).json(result);
       next();
     } catch (err) {

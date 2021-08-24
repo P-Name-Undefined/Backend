@@ -20,7 +20,7 @@ routes.get(
     campaignController.getCampaignListByStatus(req, res, next);
   },
 );
-
+//Por que tem duas rotas de finishCampaign?
 routes.put('/campaign/:id', isAuthenticated, (req, res, next) => {
   campaignController.finishCampaign(req, res, next);
 });

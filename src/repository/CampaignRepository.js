@@ -12,20 +12,7 @@ class CampaignRepository extends BaseRepository {
     const newCampaign = await super.$save(campaign);
     return newCampaign;
   }
-
-  async list() {
-    const query = null;
-    const populate = 'campaign';
-    const campaigns = await super.$list(query, populate);
-    return campaigns;
-  }
-
-  async listByOwnerId(ownerId) {
-    const query = { ownerId };
-    const campaigns = await super.$list(query);
-    return campaigns;
-  }
-
+  
   async getById(id) {
     const campaign = await super.$getById(id);
     return campaign;
