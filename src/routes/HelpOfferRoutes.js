@@ -33,6 +33,14 @@ routes.put(
   },
 );
 
+routes.put(
+  '/helpOffer/chooseHelpedUsers/:helpedId/:helpOfferId',
+  isAuthenticated,
+  (req, res, next) => {
+    helpOfferController.chooseHelpedUsers(req, res, next);
+  }
+);
+
 routes.delete('/helpOffer/:helpOfferId', isAuthenticated, async (req, res, next) => {
   helpOfferController.finishHelpOfferByOwner(req, res, next);
 });

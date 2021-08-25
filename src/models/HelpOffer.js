@@ -36,11 +36,11 @@ const offeredHelpSchema = new Schema(
       ref: "User",
       required: true,
     },
-    helpedUserId: {
-      type: [Schema.Types.ObjectId],
+    helpedUserId: [{
+      type: Schema.Types.ObjectId,
       ref: "User",
       required: false,
-    },
+    }],
     creationDate: {
       type: Date,
       default: Date.now,
@@ -75,6 +75,12 @@ offeredHelpSchema.virtual("user", {
 offeredHelpSchema.virtual("categories", {
   ref: 'Category',
   localField: "categoryId",
+  foreignField: "_id",
+});
+
+offeredHelpSchema.virtual("helpedUsers", {
+  ref: 'User',
+  localField: 'helpedUserId',
   foreignField: "_id",
 });
 

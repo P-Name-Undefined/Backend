@@ -6,6 +6,7 @@ const notificationTypes = {
   ajudaFinalizada: 'Seu pedido de ajuda foi finalizado!',
   ajudaExpirada: 'Seu pedido de ajuda expirou!',
   ofertaRequerida: 'Sua oferta de ajuda possui um usuário interessado!',
+  ofertaAceita: 'Seu pedido de ajuda foi aceito!',
   outros: 'Demais tipos de notificação!',
 };
 
@@ -16,6 +17,7 @@ const notificationTypesEnum = {
   ajudaExpirada: 'ajudaExpirada',
   notificacaoManual: 'notificacaoManual',
   ofertaRequerida: 'ofertaRequerida',
+  ofertaAceita: 'ofertaAceita',
   outros: 'outros',
 };
 

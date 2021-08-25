@@ -35,10 +35,10 @@ class OfferedHelpController {
     const userId = req.query.userId;
     const getOtherUsers = req.query.getOtherUsers == 'true' ? true : false;
     try {
-      const helpOffers = await this.HelpOfferService.listHelpsOffers(userId, null,getOtherUsers);
+      const helpOffers = await this.HelpOfferService.listHelpsOffers(userId, null, getOtherUsers);
       return res.json(helpOffers);
     } catch (error) {
-      return res.status(400).json({error:error.message});
+      return res.status(400).json({ error: error.message });
     }
   }
 
@@ -60,11 +60,19 @@ class OfferedHelpController {
       await this.HelpOfferService.addPossibleHelpedUsers(helpedId, helpOfferId);
       return res.status(204).json();
     } catch (error) {
-      return res.status(400).json({error:error.message});
+      return res.status(400).json({ error: error.message });
     }
   }
 
-  async chooseHelpedUser(req, res) {}
+  async chooseHelpedUsers(req, res) {
+    const { helpedId, helpOfferId } = req.params;
+    try {
+      await this.HelpOfferService.addHelpedUsers(helpedId, helpOfferId);
+      return res.status(204).json();
+    } catch (error) {
+      return res.status(400).json({ error: error.message });
+    }
+  }
 
   async finishHelpOfferByOwner(req, res) {
     const { helpOfferId } = req.params;

@@ -24,7 +24,10 @@ class OfferdHelpRepository extends BaseRepository {
       'title',
       'status',
       'ownerId',
-      'categoryId'
+      'categoryId',
+      'possibleHelpedUsers',
+      'possibleEntities',
+      'helpedUserId'
     ];
     const user = {
       path: 'user',
@@ -42,8 +45,12 @@ class OfferdHelpRepository extends BaseRepository {
       path: 'possibleEntities',
       select: ['_id', 'name', 'photo', 'birthday', 'address.city']
     };
+    const helpedUsers = {
+      path: 'helpedUsers',
+      select: ['_id', 'name', 'photo', 'birthday', 'phone', 'address.city']
+    };
 
-    const populate = [user, categories, possibleHelpedUsers, possibleEntities];
+    const populate = [user, categories, possibleHelpedUsers, possibleEntities, helpedUsers];
     return super.$findOne(query, helpOfferFields, populate);
   }
 
@@ -55,7 +62,7 @@ class OfferdHelpRepository extends BaseRepository {
       categoryArray
     );
     const helpOfferFields = ['_id', 'title', 'categoryId', 'ownerId'];
-    const sort = {creationDate: -1}
+    const sort = { creationDate: -1 }
     const user = {
       path: 'user',
       select: ['name', 'address', 'birthday', 'location.coordinates']
@@ -73,7 +80,12 @@ class OfferdHelpRepository extends BaseRepository {
       select: ['_id', 'name']
     };
 
-    const populate = [user, categories, possibleHelpedUsers, possibleEntities];
+    const helpedUsers = {
+      path: 'helpedUserId',
+      select: ['_id', 'name']
+    };
+
+    const populate = [user, categories, possibleHelpedUsers, possibleEntities, helpedUsers];
 
     return super.$list(matchQuery, helpOfferFields, populate, sort);
   }
