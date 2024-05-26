@@ -4,7 +4,6 @@ const UserSeed = require('../utils/seed/UserSeed');
 const HelpSeed = require('../utils/seed/HelpOfferCampaignSeed');
 const NotificationSeed = require('../utils/seed/NotificationSeed');
 const BadgeSeed = require('../utils/seed/BadgeTemplateSeed');
-const TimelineEventTemplateSeed = require('../utils/seed/TimelineEventTemplateSeed');
 
 const databaseURL = process.env.DATABASE_URL || 'mongodb://mongo:27017/miaAjudaDB';
 const envType = process.env.NODE_ENV || 'development';
@@ -25,7 +24,6 @@ const databaseConnect = async () => {
       await HelpSeed();
       await NotificationSeed();
       await BadgeSeed();
-      await TimelineEventTemplateSeed();
     }
   } catch (err) {
     console.log('Não foi possível inicicializar corretamente a base de dados!');
