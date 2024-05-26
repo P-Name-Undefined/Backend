@@ -22,8 +22,8 @@ const databaseConnect = async () => {
     if (envType === 'development') {
       await UserSeed();
       await HelpSeed();
-      // await NotificationSeed();
-      // await BadgeSeed();
+      await NotificationSeed();
+      await BadgeSeed();
     }
   } catch (err) {
     console.log('Não foi possível inicicializar corretamente a base de dados!');
